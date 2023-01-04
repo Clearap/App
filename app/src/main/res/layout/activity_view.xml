@@ -5,25 +5,12 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".SubActivity">
+    tools:context=".ViewActivity">
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="로그인 완료! or 로그인 실패"
+        android:text="파일명"
         android:textSize="20sp"/>
 
-    <TextView
-        android:id="@+id/rcv_id"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="20sp"
-        android:text="id"/>
-
-    <TextView
-        android:id="@+id/rcv_pw"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="20sp"
-        android:text="pw"/>
 </LinearLayout>

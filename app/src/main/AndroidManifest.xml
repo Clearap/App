@@ -34,7 +34,7 @@
                 android:value="" />
         </activity>
         <activity
-            android:name=".SubActivity"
+            android:name=".ViewActivity"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"
