@@ -14,11 +14,13 @@ public class myDBHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL("CREATE TABLE USERTABLE ( userid TEXT PRIMARY KEY, userpwd TEXT, useremail TEXT)");
+        db.execSQL("CREATE TABLE FILETABLE ( userid TEXT, filename TEXT, filepath TEXT)");
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         db.execSQL("DROP TABLE IF EXISTS USERTABLE");
+        db.execSQL("DROP TABLE IF EXISTS FILETABLE");
         onCreate(db);
     }
 
@@ -36,6 +38,23 @@ public class myDBHelper extends SQLiteOpenHelper {
             return true;
         }
     }
+
+    public Boolean insertFileData(String userid, String filename, String filepath){
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+
+        values.put("userid", userid);
+        values.put("filename", filename);
+        values.put("filepath", filepath);
+
+        long result = db.insert("FILETABLE", null, values);
+        if(result == -1){
+            return false;
+        }else{
+            return true;
+        }
+    }
+
 
     public Boolean checkusername(String username){
         SQLiteDatabase db = this.getWritableDatabase();

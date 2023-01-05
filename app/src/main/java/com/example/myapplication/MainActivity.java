@@ -19,7 +19,6 @@ public class MainActivity extends AppCompatActivity {
     String str_id;
     String str_pw;
     myDBHelper myDBHelper;
-    SQLiteDatabase sqlDB;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
