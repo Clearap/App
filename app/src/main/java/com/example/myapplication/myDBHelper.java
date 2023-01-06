@@ -8,13 +8,13 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 public class myDBHelper extends SQLiteOpenHelper {
     public myDBHelper(Context context) {
-        super(context, "userDB.db", null, 1);
+        super(context, "filesDB.db", null, 1);
     }
 
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL("CREATE TABLE USERTABLE ( userid TEXT PRIMARY KEY, userpwd TEXT, useremail TEXT)");
-        db.execSQL("CREATE TABLE FILETABLE ( userid TEXT, filename TEXT, filepath TEXT)");
+        db.execSQL("CREATE TABLE FILETABLE ( userid TEXT, filename TEXT PRIMARY KEY, filepath TEXT)");
     }
 
     @Override
@@ -24,12 +24,13 @@ public class myDBHelper extends SQLiteOpenHelper {
         onCreate(db);
     }
 
-    public Boolean insertData(String userid, String userpwd){
+    public Boolean insertData(String userid, String userpwd, String useremail){
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
 
         values.put("userid", userid);
         values.put("userpwd", userpwd);
+        values.put("useremail", useremail);
 
         long result = db.insert("USERTABLE", null, values);
         if(result == -1){
@@ -54,7 +55,6 @@ public class myDBHelper extends SQLiteOpenHelper {
             return true;
         }
     }
-
 
     public Boolean checkusername(String username){
         SQLiteDatabase db = this.getWritableDatabase();

@@ -15,6 +15,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.OpenableColumns;
+import android.text.TextUtils;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
@@ -34,14 +35,17 @@ public class UploadActivity extends AppCompatActivity {
     Button btn_path;
     DrawerLayout drawerLayout;
     View drawerView;
-    TextView tv_instorage, tv_fname, tv_fpath;
-
+    TextView tv_instorage, tv_fname, tv_fsize, tv_fpath;
+    String fname, fsize, fpath;
+    myDBHelper myDBHelper;
+    Bitmap imgBitmap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_upload);
 
+        myDBHelper = new myDBHelper(this);
         upload_img = (ImageView)findViewById(R.id.upload_img);
         btn_upload = (Button)findViewById(R.id.btn_upload);
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -49,6 +53,7 @@ public class UploadActivity extends AppCompatActivity {
         btn_path = (Button) findViewById(R.id.btn_path);
         tv_instorage = (TextView)findViewById(R.id.tv_instorage);
         tv_fname = (TextView)findViewById(R.id.tv_fname);
+        tv_fsize = (TextView)findViewById(R.id.tv_fsize);
         tv_fpath = (TextView)findViewById(R.id.tv_fpath);
 
         upload_img.setOnClickListener(new View.OnClickListener() {
@@ -60,7 +65,18 @@ public class UploadActivity extends AppCompatActivity {
         btn_upload.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                if (TextUtils.isEmpty(fname) || TextUtils.isEmpty(fpath)){
+                    Toast.makeText(getApplicationContext(), "파일을 선택해주세요", Toast.LENGTH_SHORT).show();
+                }else{
+                    saveBitmapToJpeg(imgBitmap);
+                    Intent intent = new Intent();
+                    boolean insert = myDBHelper.insertFileData(getIntent().getStringExtra("userid"), fname, fpath);
+                    if(insert == true){
+                        Toast.makeText(getApplicationContext(), "업로드 성공", Toast.LENGTH_SHORT).show();
+                    }else{
+                        Toast.makeText(getApplicationContext(), "업로드 실패", Toast.LENGTH_SHORT).show();
+                    }
+                }
             }
         });
         btn_path.setOnClickListener(new View.OnClickListener() {
@@ -102,16 +118,20 @@ public class UploadActivity extends AppCompatActivity {
             ContentResolver resolver = getContentResolver();
             try {
                 InputStream ips = resolver.openInputStream(fileUri);
-                Bitmap imgBitmap = BitmapFactory.decodeStream(ips);
+                imgBitmap = BitmapFactory.decodeStream(ips);
                 upload_img.setImageBitmap(imgBitmap);
                 Cursor returnCursor = getContentResolver().query(fileUri, null, null, null, null);
                 int nameIndex = returnCursor.getColumnIndex(OpenableColumns.DISPLAY_NAME);
                 int sizeIndex = returnCursor.getColumnIndex(OpenableColumns.SIZE);
                 returnCursor.moveToFirst();
-                tv_fname.setText(returnCursor.getShort(nameIndex));
-                tv_fpath.setText(Long.toString(returnCursor.getLong(sizeIndex)));
+                fname = returnCursor.getString(nameIndex);
+                fpath = fileUri.getPath();
+                fsize = Long.toString(returnCursor.getLong(sizeIndex));
+                tv_fname.setText(fname);
+                tv_fpath.setText(fpath);
+                tv_fsize.setText(fsize);
                 ips.close();
-//                saveBitmapToJpeg(imgBitmap);
+
                 Toast.makeText(getApplicationContext(), "파일 불러오기 성공!", Toast.LENGTH_SHORT).show();
             } catch (Exception e) {
                 Toast.makeText(getApplicationContext(), "파일 불러오기 실패!", Toast.LENGTH_SHORT).show();
@@ -119,18 +139,18 @@ public class UploadActivity extends AppCompatActivity {
         }
     }
 
-//    public void saveBitmapToJpeg(Bitmap bitmap){
-//        File tempFile = new File(getCacheDir(), imgName);
-//        try{
-//            tempFile.createNewFile();
-//            FileOutputStream out = new FileOutputStream(tempFile);
-//            bitmap.compress(Bitmap.CompressFormat.PNG, 100, out);
-//            out.close();
-//            Toast.makeText(getApplicationContext(), "파일 저장 성공!", Toast.LENGTH_SHORT).show();
-//        }catch (Exception e){
-//            Toast.makeText(getApplicationContext(), "파일 저장 실패!", Toast.LENGTH_SHORT).show();
-//        }
-//    }
+    public void saveBitmapToJpeg(Bitmap bitmap){
+        File tempFile = new File(getCacheDir(), fname);
+        try{
+            tempFile.createNewFile();
+            FileOutputStream out = new FileOutputStream(tempFile);
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, out);
+            out.close();
+            Toast.makeText(getApplicationContext(), "파일 저장 성공!", Toast.LENGTH_SHORT).show();
+        }catch (Exception e){
+            Toast.makeText(getApplicationContext(), "파일 저장 실패!", Toast.LENGTH_SHORT).show();
+        }
+    }
     DrawerLayout.DrawerListener listener = new DrawerLayout.DrawerListener() {
         @Override
         public void onDrawerSlide(@NonNull View drawerView, float slideOffset) {

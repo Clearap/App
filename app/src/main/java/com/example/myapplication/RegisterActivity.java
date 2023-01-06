@@ -48,7 +48,7 @@ public class RegisterActivity extends AppCompatActivity {
                     if(str_pw.equals(str_pw2)){
                         Boolean checkuser = myDBHelper.checkusername(str_id);
                         if(checkuser == false){
-                            Boolean insert = myDBHelper.insertData(str_id, str_pw);
+                            Boolean insert = myDBHelper.insertData(str_id, str_pw, str_email);
                             if(insert == true){
                                 Toast.makeText(getApplicationContext(),"계정 생성 완료", Toast.LENGTH_SHORT).show();
                                 finish();
@@ -62,19 +62,6 @@ public class RegisterActivity extends AppCompatActivity {
                         Toast.makeText(getApplicationContext(),"패스워드가 일치하지 않습니다.", Toast.LENGTH_SHORT).show();
                     }
                 }
-
-//                if(str_pw.equals(str_pw2)){
-//                    sqlDB = myDBHelper.getWritableDatabase();
-//                    sqlDB.execSQL("INSERT INTO USERTABLE VALUES ( '" + str_id + "', '" + str_pw + "', '" + str_email + "');");
-//                    sqlDB.close();
-//                    finish();
-////                    }else{
-////                      Toast registfail = Toast.makeText(getApplicationContext(), "등록 실패", Toast.LENGTH_SHORT);
-////                        registfail.show();
-////                    }
-//                }else {
-//                    Toast.makeText(getApplicationContext(), "패스워드가 일치하지 않습니다", Toast.LENGTH_SHORT).show();
-//                }
             }
         });
     }

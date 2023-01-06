@@ -42,6 +42,7 @@ public class MainActivity extends AppCompatActivity {
                     if(checkuserpass == true){
                         Toast.makeText(getApplicationContext(),"로그인 성공", Toast.LENGTH_SHORT).show();
                         Intent intent = new Intent(MainActivity.this, ImglistActivity.class);
+                        intent.putExtra("userid", str_id);
                         startActivity(intent);
                     }else{
                         Toast.makeText(getApplicationContext(),"로그인 실패", Toast.LENGTH_SHORT).show();
