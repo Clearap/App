@@ -2,10 +2,12 @@ package com.example.myapplication;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
 import android.app.Activity;
 import android.content.ContentResolver;
+import android.content.ContentUris;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
@@ -14,6 +16,8 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.provider.DocumentsContract;
+import android.provider.MediaStore;
 import android.provider.OpenableColumns;
 import android.text.TextUtils;
 import android.view.MotionEvent;
@@ -73,6 +77,7 @@ public class UploadActivity extends AppCompatActivity {
                     boolean insert = myDBHelper.insertFileData(getIntent().getStringExtra("userid"), fname, fpath);
                     if(insert == true){
                         Toast.makeText(getApplicationContext(), "업로드 성공", Toast.LENGTH_SHORT).show();
+                        finish();
                     }else{
                         Toast.makeText(getApplicationContext(), "업로드 실패", Toast.LENGTH_SHORT).show();
                     }
@@ -92,7 +97,6 @@ public class UploadActivity extends AppCompatActivity {
                 drawerLayout.closeDrawers();
             }
         });
-        drawerLayout.setDrawerListener(listener);
         drawerView.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
@@ -133,6 +137,7 @@ public class UploadActivity extends AppCompatActivity {
                 ips.close();
 
                 Toast.makeText(getApplicationContext(), "파일 불러오기 성공!", Toast.LENGTH_SHORT).show();
+
             } catch (Exception e) {
                 Toast.makeText(getApplicationContext(), "파일 불러오기 실패!", Toast.LENGTH_SHORT).show();
             }
@@ -151,25 +156,4 @@ public class UploadActivity extends AppCompatActivity {
             Toast.makeText(getApplicationContext(), "파일 저장 실패!", Toast.LENGTH_SHORT).show();
         }
     }
-    DrawerLayout.DrawerListener listener = new DrawerLayout.DrawerListener() {
-        @Override
-        public void onDrawerSlide(@NonNull View drawerView, float slideOffset) {
-
-        }
-
-        @Override
-        public void onDrawerOpened(@NonNull View drawerView) {
-
-        }
-
-        @Override
-        public void onDrawerClosed(@NonNull View drawerView) {
-
-        }
-
-        @Override
-        public void onDrawerStateChanged(int newState) {
-
-        }
-    };
 }
