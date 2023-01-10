@@ -1,11 +1,9 @@
 package com.example.myapplication;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
-import android.app.Activity;
+import android.app.ListActivity;
 import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.Context;
@@ -20,29 +18,31 @@ import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.provider.OpenableColumns;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.io.OutputStream;
 
 public class UploadActivity extends AppCompatActivity {
 
     ImageView upload_img;
-    Button btn_upload;
-    Button btn_path;
+    Button btn_upload, btn_path;
     DrawerLayout drawerLayout;
     View drawerView;
     TextView tv_instorage, tv_fname, tv_fsize, tv_fpath;
-    String fname, fsize, fpath;
+    String fname, fsize, realfilepath;
     myDBHelper myDBHelper;
     Bitmap imgBitmap;
+    String userid, save_path;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,6 +59,7 @@ public class UploadActivity extends AppCompatActivity {
         tv_fname = (TextView)findViewById(R.id.tv_fname);
         tv_fsize = (TextView)findViewById(R.id.tv_fsize);
         tv_fpath = (TextView)findViewById(R.id.tv_fpath);
+        userid = getIntent().getStringExtra("userid");
 
         upload_img.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -69,12 +70,11 @@ public class UploadActivity extends AppCompatActivity {
         btn_upload.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (TextUtils.isEmpty(fname) || TextUtils.isEmpty(fpath)){
+                if (TextUtils.isEmpty(fname) || TextUtils.isEmpty(realfilepath)){
                     Toast.makeText(getApplicationContext(), "파일을 선택해주세요", Toast.LENGTH_SHORT).show();
                 }else{
-                    saveBitmapToJpeg(imgBitmap);
-                    Intent intent = new Intent();
-                    boolean insert = myDBHelper.insertFileData(getIntent().getStringExtra("userid"), fname, fpath);
+                    save_path = saveBitmapToJpeg(imgBitmap, userid);
+                    boolean insert = myDBHelper.insertFileData(userid, fname, save_path);
                     if(insert == true){
                         Toast.makeText(getApplicationContext(), "업로드 성공", Toast.LENGTH_SHORT).show();
                         finish();
@@ -124,28 +124,30 @@ public class UploadActivity extends AppCompatActivity {
                 InputStream ips = resolver.openInputStream(fileUri);
                 imgBitmap = BitmapFactory.decodeStream(ips);
                 upload_img.setImageBitmap(imgBitmap);
+
                 Cursor returnCursor = getContentResolver().query(fileUri, null, null, null, null);
                 int nameIndex = returnCursor.getColumnIndex(OpenableColumns.DISPLAY_NAME);
                 int sizeIndex = returnCursor.getColumnIndex(OpenableColumns.SIZE);
                 returnCursor.moveToFirst();
+
                 fname = returnCursor.getString(nameIndex);
-                fpath = fileUri.getPath();
+                realfilepath = getRealPathFromURI(fileUri, this);
                 fsize = Long.toString(returnCursor.getLong(sizeIndex));
                 tv_fname.setText(fname);
-                tv_fpath.setText(fpath);
+                tv_fpath.setText(realfilepath);
                 tv_fsize.setText(fsize);
                 ips.close();
 
                 Toast.makeText(getApplicationContext(), "파일 불러오기 성공!", Toast.LENGTH_SHORT).show();
-
             } catch (Exception e) {
                 Toast.makeText(getApplicationContext(), "파일 불러오기 실패!", Toast.LENGTH_SHORT).show();
             }
         }
     }
 
-    public void saveBitmapToJpeg(Bitmap bitmap){
-        File tempFile = new File(getCacheDir(), fname);
+    public String saveBitmapToJpeg(Bitmap bitmap, String userid){
+        File path = this.getDir(userid, 0);
+        File tempFile = new File(path, fname);
         try{
             tempFile.createNewFile();
             FileOutputStream out = new FileOutputStream(tempFile);
@@ -155,5 +157,40 @@ public class UploadActivity extends AppCompatActivity {
         }catch (Exception e){
             Toast.makeText(getApplicationContext(), "파일 저장 실패!", Toast.LENGTH_SHORT).show();
         }
+        return tempFile.getPath();
+    }
+
+    private static String getRealPathFromURI(Uri uri, Context context) {
+        Uri returnUri = uri;
+        Cursor returnCursor = context.getContentResolver().query(returnUri, null, null, null, null);
+        int nameIndex = returnCursor.getColumnIndex(OpenableColumns.DISPLAY_NAME);
+        int sizeIndex = returnCursor.getColumnIndex(OpenableColumns.SIZE);
+        returnCursor.moveToFirst();
+        String name = (returnCursor.getString(nameIndex));
+        String size = (Long.toString(returnCursor.getLong(sizeIndex)));
+        File file = new File(context.getFilesDir(), name);
+        try {
+            InputStream inputStream = context.getContentResolver().openInputStream(uri);
+            FileOutputStream outputStream = new FileOutputStream(file);
+            int read = 0;
+            int maxBufferSize = 1 * 1024 * 1024;
+            int bytesAvailable = inputStream.available();
+
+            //int bufferSize = 1024;
+            int bufferSize = Math.min(bytesAvailable, maxBufferSize);
+
+            final byte[] buffers = new byte[bufferSize];
+            while ((read = inputStream.read(buffers)) != -1) {
+                outputStream.write(buffers, 0, read);
+            }
+            Log.e("File Size", "Size " + file.length());
+            inputStream.close();
+            outputStream.close();
+            Log.e("File Path", "Path " + file.getPath());
+            Log.e("File Size", "Size " + file.length());
+        } catch (Exception e) {
+            Log.e("Exception", e.getMessage());
+        }
+        return file.getPath();
     }
 }

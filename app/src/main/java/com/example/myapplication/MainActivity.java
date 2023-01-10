@@ -1,9 +1,15 @@
 package com.example.myapplication;
 
+import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
+import static android.Manifest.permission.READ_EXTERNAL_STORAGE;
+
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import android.content.Intent;
-import android.database.sqlite.SQLiteDatabase;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
@@ -12,6 +18,8 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
+    private static final int REQ_PERMISSION_CALLBACK = 100;
+
     EditText et_id;
     EditText et_pw;
     Button btn_login;
@@ -24,6 +32,12 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        isPermissionGrantedNRequestPermission(WRITE_EXTERNAL_STORAGE, REQ_PERMISSION_CALLBACK);
+        isPermissionGrantedNRequestPermission(READ_EXTERNAL_STORAGE, REQ_PERMISSION_CALLBACK);
+
+        setContentView(R.layout.activity_main);
+
         et_id = findViewById(R.id.et_id);
         et_pw = findViewById(R.id.et_pw);
         btn_login = findViewById(R.id.btn_login);
@@ -58,5 +72,34 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+    }
+
+    public boolean isPermissionGranted(String strPermission){
+        boolean blsPermissionGranted = true;
+
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
+            if(PackageManager.PERMISSION_GRANTED != ContextCompat.checkSelfPermission(this, strPermission)){
+                blsPermissionGranted = false;
+            }else{
+                blsPermissionGranted = true;
+            }
+        }
+        return blsPermissionGranted;
+    }
+
+    public boolean isPermissionGrantedNRequestPermission(String strPermission, int iCallback){
+        boolean blsPermissionGranted = isPermissionGranted(strPermission);
+
+        if(!blsPermissionGranted){
+            boolean blsDeny = ActivityCompat.shouldShowRequestPermissionRationale(this, strPermission);
+            if(blsDeny){
+                this.requestPermissions(new String[]{strPermission}, iCallback);
+                blsPermissionGranted = false;
+            }else{
+                ActivityCompat.requestPermissions(this, new String[]{strPermission}, iCallback);
+                blsPermissionGranted = true;
+            }
+        }
+        return blsPermissionGranted;
     }
 }

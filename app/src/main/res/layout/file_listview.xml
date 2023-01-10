@@ -6,26 +6,21 @@
     android:layout_height="match_parent"
     android:background="@drawable/shape_itembackground">
 
-<!--    <RelativeLayout-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:padding="10dp"/>-->
-
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="경로"/>
-
+        android:text="파일명"/>
 
     <TextView
         android:id="@+id/tv_filename"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
     />
+
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="파일명"/>
+        android:text="경로"/>
 
     <TextView
         android:id="@+id/tv_filepath"

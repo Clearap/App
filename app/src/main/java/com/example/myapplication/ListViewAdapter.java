@@ -10,7 +10,7 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 public class ListViewAdapter extends BaseAdapter {
-    ArrayList<ListViewAdapterData> list = new ArrayList<ListViewAdapterData>();
+    ArrayList<ListViewAdapterData> list = new ArrayList<>();
 
     public int getCount(){
         return list.size();

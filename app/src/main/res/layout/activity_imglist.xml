@@ -20,6 +20,7 @@
 
     <ListView
         android:id="@+id/db_file_list"
+        android:descendantFocusability="blocksDescendants"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
 

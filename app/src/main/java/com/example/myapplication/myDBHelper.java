@@ -14,7 +14,7 @@ public class myDBHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL("CREATE TABLE USERTABLE ( userid TEXT PRIMARY KEY, userpwd TEXT, useremail TEXT)");
-        db.execSQL("CREATE TABLE FILETABLE ( userid TEXT, filename TEXT PRIMARY KEY, filepath TEXT)");
+        db.execSQL("CREATE TABLE FILETABLE ( userid TEXT, filename TEXT, filepath TEXT)");
     }
 
     @Override
@@ -54,6 +54,11 @@ public class myDBHelper extends SQLiteOpenHelper {
         }else{
             return true;
         }
+    }
+
+    public int deleteFileData(String userid, String filename){
+        SQLiteDatabase db = this.getWritableDatabase();
+        return db.delete("FILETABLE", "userid = ? and filename = ?", new String[] {userid, filename});
     }
 
     public Boolean checkusername(String username){
