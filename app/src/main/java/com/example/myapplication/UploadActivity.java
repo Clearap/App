@@ -74,7 +74,7 @@ public class UploadActivity extends AppCompatActivity {
                     Toast.makeText(getApplicationContext(), "파일을 선택해주세요", Toast.LENGTH_SHORT).show();
                 }else{
                     save_path = saveBitmapToJpeg(imgBitmap, userid);
-                    boolean insert = myDBHelper.insertFileData(userid, fname, save_path);
+                    boolean insert = myDBHelper.insertFileData(userid, fname, save_path, fsize);
                     if(insert == true){
                         Toast.makeText(getApplicationContext(), "업로드 성공", Toast.LENGTH_SHORT).show();
                         finish();

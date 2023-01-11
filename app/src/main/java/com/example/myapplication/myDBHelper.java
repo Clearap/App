@@ -14,7 +14,7 @@ public class myDBHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL("CREATE TABLE USERTABLE ( userid TEXT PRIMARY KEY, userpwd TEXT, useremail TEXT)");
-        db.execSQL("CREATE TABLE FILETABLE ( userid TEXT, filename TEXT, filepath TEXT)");
+        db.execSQL("CREATE TABLE FILETABLE ( userid TEXT, filename TEXT, filepath TEXT, filesize TEXT)");
     }
 
     @Override
@@ -40,13 +40,14 @@ public class myDBHelper extends SQLiteOpenHelper {
         }
     }
 
-    public Boolean insertFileData(String userid, String filename, String filepath){
+    public Boolean insertFileData(String userid, String filename, String filepath, String filesize){
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
 
         values.put("userid", userid);
         values.put("filename", filename);
         values.put("filepath", filepath);
+        values.put("filesize", filesize);
 
         long result = db.insert("FILETABLE", null, values);
         if(result == -1){
