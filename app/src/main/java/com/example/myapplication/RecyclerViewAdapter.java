@@ -1,23 +1,59 @@
 package com.example.myapplication;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.io.File;
 import java.util.ArrayList;
 
-public class RecyclerViewAdapter extends RecyclerView.Adapter<ViewHolder>{
+public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.ViewHolder>{
+    public interface OnItemClickListener{
+        void onItemClick(View view, int pos);
+    }
+    private OnItemClickListener mListener = null;
     private ArrayList<ImgFile> myFileList = null;
 
-    RecyclerViewAdapter(ArrayList<ImgFile> fileList){
-        myFileList = fileList;
+    public void setOnItemClickListener(OnItemClickListener listener){
+        this.mListener = listener;
+    }
+    public class ViewHolder extends RecyclerView.ViewHolder{
+        ImageView imageView;
+        TextView filename;
+        TextView filesize;
+        ViewHolder(View itemView){
+            super(itemView);
+
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    int pos = getAdapterPosition();
+                    if(pos != RecyclerView.NO_POSITION){
+                        if(mListener != null){
+                            mListener.onItemClick(view, pos);
+
+                            notifyDataSetChanged();
+                        }
+                    }
+                }
+            });
+
+            imageView = itemView.findViewById(R.id.imageView2);
+            filename = itemView.findViewById(R.id.filename);
+            filesize = itemView.findViewById(R.id.filesize);
+        }
+    }
+    public RecyclerViewAdapter(ArrayList<ImgFile> fileList)
+    {
+        this.myFileList = fileList;
     }
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType){
@@ -42,6 +78,6 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<ViewHolder>{
 
     @Override
     public int getItemCount() {
-        return 0;
+        return myFileList.size();
     }
 }
