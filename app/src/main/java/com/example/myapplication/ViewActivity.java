@@ -10,8 +10,10 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.File;
+import java.util.ArrayList;
 
 public class ViewActivity extends AppCompatActivity {
 
@@ -23,7 +25,6 @@ public class ViewActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view);
-
         iv_img = findViewById(R.id.iv_img);
         tv_filename = findViewById(R.id.tv_filename);
         btn_delete = findViewById(R.id.btn_delete);
@@ -43,9 +44,12 @@ public class ViewActivity extends AppCompatActivity {
         btn_delete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
                 myDBHelper.deleteFileData(userid, filename);
                 File file = new File(filepath);
                 file.delete();
+
+                Toast.makeText(getApplicationContext(), "삭제 완료! 다시 로그인 해주세요", Toast.LENGTH_SHORT).show();
                 finish();
             }
         });

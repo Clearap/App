@@ -3,9 +3,7 @@ package com.example.myapplication;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.drawerlayout.widget.DrawerLayout;
 
-import android.app.ListActivity;
 import android.content.ContentResolver;
-import android.content.ContentUris;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
@@ -13,9 +11,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
-import android.provider.DocumentsContract;
-import android.provider.MediaStore;
 import android.provider.OpenableColumns;
 import android.text.TextUtils;
 import android.util.Log;
@@ -27,10 +22,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
-import java.io.OutputStream;
 
 public class UploadActivity extends AppCompatActivity {
 
@@ -76,10 +69,14 @@ public class UploadActivity extends AppCompatActivity {
                     save_path = saveBitmapToJpeg(imgBitmap, userid);
                     boolean insert = myDBHelper.insertFileData(userid, fname, save_path, fsize);
                     if(insert == true){
-                        Toast.makeText(getApplicationContext(), "업로드 성공", Toast.LENGTH_SHORT).show();
+                        File filesdir = getFilesDir();
+                        String files = filesdir.getPath() + "/" + tv_fname.getText();
+                        File file1 = new File(files);
+                        file1.delete();
+                        Toast.makeText(getApplicationContext(), "업로드 성공! 다시 로그인 해주세요", Toast.LENGTH_SHORT).show();
                         finish();
                     }else{
-                        Toast.makeText(getApplicationContext(), "업로드 실패", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(), "동일한 이름의 파일이 있습니다!", Toast.LENGTH_SHORT).show();
                     }
                 }
             }
@@ -153,7 +150,6 @@ public class UploadActivity extends AppCompatActivity {
             FileOutputStream out = new FileOutputStream(tempFile);
             bitmap.compress(Bitmap.CompressFormat.PNG, 100, out);
             out.close();
-            Toast.makeText(getApplicationContext(), "파일 저장 성공!", Toast.LENGTH_SHORT).show();
         }catch (Exception e){
             Toast.makeText(getApplicationContext(), "파일 저장 실패!", Toast.LENGTH_SHORT).show();
         }

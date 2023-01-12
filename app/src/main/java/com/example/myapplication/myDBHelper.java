@@ -14,7 +14,7 @@ public class myDBHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL("CREATE TABLE USERTABLE ( userid TEXT PRIMARY KEY, userpwd TEXT, useremail TEXT)");
-        db.execSQL("CREATE TABLE FILETABLE ( userid TEXT, filename TEXT PRIMARY KEY, filepath TEXT, filesize TEXT)");
+        db.execSQL("CREATE TABLE FILETABLE ( userid TEXT, filename TEXT, filepath TEXT PRIMARY KEY, filesize TEXT)");
     }
 
     @Override
