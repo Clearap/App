@@ -71,18 +71,6 @@ public class ImglistActivity extends AppCompatActivity{
         });
     }
 
-//    @Override
-//    protected void onResume() {
-//        super.onResume();
-//        fileList.clear();
-//        InitializeData(userid);
-//        recyclerview.setLayoutManager(manager);
-//        recyclerview.setAdapter(recyclerViewAdapter);
-//        recyclerViewAdapter.notifyDataSetChanged();
-
-//        recyclerViewAdapter.upDateItemList(fileList);
-//    }
-
     public void InitializeData(String userid){
         myDBHelper = new myDBHelper(this);
         SQLiteDatabase database = myDBHelper.getReadableDatabase();
