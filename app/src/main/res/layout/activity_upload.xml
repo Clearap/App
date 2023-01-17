@@ -16,7 +16,7 @@
             android:id="@+id/upload_img"
             android:layout_width="410dp"
             android:layout_height="410dp"
-            android:src="@mipmap/ic_launcher"/>
+            android:src="@drawable/ic_launcher"/>
 
         <TextView
             android:id="@+id/tv_fname"

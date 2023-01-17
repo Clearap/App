@@ -7,6 +7,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
@@ -27,7 +29,7 @@ public class MainActivity extends AppCompatActivity {
     String str_id;
     String str_pw;
     myDBHelper myDBHelper;
-
+    BroadcastReceiver mReceiver;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,7 +38,7 @@ public class MainActivity extends AppCompatActivity {
         isPermissionGrantedNRequestPermission(WRITE_EXTERNAL_STORAGE, REQ_PERMISSION_CALLBACK);
         isPermissionGrantedNRequestPermission(READ_EXTERNAL_STORAGE, REQ_PERMISSION_CALLBACK);
 
-        setContentView(R.layout.activity_main);
+        mReceiver = new MyReceiver();
 
         et_id = findViewById(R.id.et_id);
         et_pw = findViewById(R.id.et_pw);

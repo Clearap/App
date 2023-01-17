@@ -57,6 +57,16 @@ public class myDBHelper extends SQLiteOpenHelper {
         }
     }
 
+    public Boolean changePassword(String userid, String userpw){
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery("update USERTABLE SET userpw = ? where userid = ?", new String[] {userpw, userid});
+        if(cursor.getCount() > 0){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
     public int deleteFileData(String userid, String filename){
         SQLiteDatabase db = this.getWritableDatabase();
         return db.delete("FILETABLE", "userid = ? and filename = ?", new String[] {userid, filename});
